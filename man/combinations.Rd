@@ -7,7 +7,8 @@
 combinations(n, k, x = NULL, freq = NULL, replace = FALSE, type = "r")
 }
 \arguments{
-\item{n}{an integer, would be determined implicitly from \code{x} or \code{f} if missing}
+\item{n}{an integer. If \code{freq} is not NULL, \code{n} would be set as \code{sum(freq)},
+otherwise if \code{x} is not NULL, \code{n} would be set as \code{length(x)}.}
 
 \item{k}{an integer}
 

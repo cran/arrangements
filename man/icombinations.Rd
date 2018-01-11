@@ -12,7 +12,8 @@ Combinations
 icombinations(n, k, x = NULL, freq = NULL, replace = FALSE)
 }
 \arguments{
-\item{n}{an integer, would be determined implicitly from \code{x} or \code{f} if missing}
+\item{n}{an integer. If \code{freq} is not NULL, \code{n} would be set as \code{sum(freq)},
+otherwise if \code{x} is not NULL, \code{n} would be set as \code{length(x)}.}
 
 \item{k}{an integer}
 
@@ -23,9 +24,9 @@ icombinations(n, k, x = NULL, freq = NULL, replace = FALSE)
 \item{replace}{an logical to draw items with replacement}
 }
 \description{
-This function returns a \href{Combinations-class.html}{Combinations} iterator which
-allows users to fetch the next combination(s) via the \code{getnext()} method. All remaing
-combinations of the iterator can be fetched via the \code{collect()} method.
+This function returns a \href{Combinations-class.html}{Combinations} iterator for iterating
+combinations of \code{k} items from \code{n} items. The iterator allows users to fetch the next
+combination(s) via the \code{getnext()} method.
 }
 \details{
 The \code{Combinations} class can be initialized by using the convenient wrapper \code{icombinations} or
