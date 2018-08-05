@@ -43,7 +43,7 @@ reset()
 \item{d}{number of fetched arrangements}
 
 \item{type}{if "r", "c" or "l" is specified, the returned value would be a
- "row-major" matrix, a "column-major" matrix or a list respectively}
+"row-major" matrix, a "column-major" matrix or a list respectively}
 
 \item{drop}{vectorize a matrix or unlist a list}
 }

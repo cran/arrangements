@@ -1,4 +1,4 @@
-#include "k_permutation.h"
+#include "multiset_permutation.h"
 
 // A Simple, Efficient P(n,k) Algorithm by Alistair Israel
 // http://alistairisrael.wordpress.com/2009/09/22/simple-efficient-pnk-algorithm/
@@ -21,7 +21,7 @@ static void reverse(unsigned int *ar, size_t len)
     }
 }
 
-unsigned int next_k_permutation(unsigned int *ar, size_t n, size_t k)
+unsigned int next_multiset_permutation(unsigned int *ar, size_t n, size_t k)
 {
     long i;
     long j;

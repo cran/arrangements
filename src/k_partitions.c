@@ -3,7 +3,7 @@
 #include <Rinternals.h>
 #include <gmp.h>
 #include "arrangements.h"
-#include "algorithms/k_partition.h"
+#include "next/k_partition.h"
 #include "utils.h"
 
 double npartitions_k(int n, int k);
@@ -155,9 +155,9 @@ SEXP next_asc_k_partitions(SEXP _n, SEXP _k, SEXP _d, SEXP state, SEXP _type) {
 SEXP next_desc_k_partitions(SEXP _n, SEXP _k, SEXP _d, SEXP state, SEXP _type) {
     int n = as_uint(_n);
     int k = as_uint(_k);
+    int d;
     double dd;
-    int d = Rf_asInteger(_d);
-    if (d == -1) {
+    if (Rf_asInteger(_d) == -1) {
         dd = npartitions_k(n, k);
     } else {
         dd = as_uint(_d);

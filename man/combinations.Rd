@@ -4,7 +4,8 @@
 \alias{combinations}
 \title{Combinations generator}
 \usage{
-combinations(n, k, x = NULL, freq = NULL, replace = FALSE, type = "r")
+combinations(n, k, x = NULL, freq = NULL, replace = FALSE,
+  type = "r")
 }
 \arguments{
 \item{n}{an integer. If \code{freq} is not NULL, \code{n} would be set as \code{sum(freq)},

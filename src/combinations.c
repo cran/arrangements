@@ -3,7 +3,7 @@
 #include <Rinternals.h>
 #include <gmp.h>
 #include "arrangements.h"
-#include "algorithms/combination.h"
+#include "next/combination.h"
 #include "utils.h"
 
 
@@ -23,8 +23,6 @@ SEXP next_combinations(SEXP _n, SEXP _k, SEXP _d, SEXP state, SEXP labels, SEXP 
     int ltype = TYPEOF(labels);
     int* labels_intp;
     double* labels_doublep;
-
-    int* fp;
 
     char type;
     if (_type == R_NilValue) {

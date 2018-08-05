@@ -2,7 +2,7 @@
 #include <R.h>
 #include <Rinternals.h>
 #include "arrangements.h"
-#include "algorithms/cartesian_product.h"
+#include "next/cartesian_product.h"
 #include "utils.h"
 
 
@@ -25,8 +25,6 @@ SEXP next_replace_permutations(SEXP _n, SEXP _k, SEXP _d, SEXP state, SEXP label
     int ltype = TYPEOF(labels);
     int* labels_intp;
     double* labels_doublep;
-
-    int* fp;
 
     char type;
     if (_type == R_NilValue) {
