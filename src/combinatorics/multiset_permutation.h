@@ -1,35 +1,23 @@
-#include "multiset_permutation.h"
+#ifndef _M_PERM_H
+#define _M_PERM_H 1
+
+#include <stddef.h>
+#include "utils.h"
 
 // A Simple, Efficient P(n,k) Algorithm by Alistair Israel
 // http://alistairisrael.wordpress.com/2009/09/22/simple-efficient-pnk-algorithm/
 // c implementation by 2017 Randy Lai
 // http://randycity.github.io
 
-static void swap(unsigned int *ar, unsigned int first, unsigned int second)
-{
-    unsigned int temp = ar[first];
-    ar[first] = ar[second];
-    ar[second] = temp;
-}
-
-static void reverse(unsigned int *ar, size_t len)
-{
-    unsigned int i, j;
-
-    for (i = 0, j = len - 1; i < j; i++, j--) {
-        swap(ar, i, j);
-    }
-}
-
 unsigned int next_multiset_permutation(unsigned int *ar, size_t n, size_t k)
 {
-    long i;
-    long j;
-    long edge = k-1;
+    unsigned int i;
+    unsigned int j;
+    unsigned int edge = k-1;
 
     if(k<n){
         j = k;
-        // search for largest j such that a_j > a_edge (a is increasing for j>=k)
+        // search for largest j such that identify_j > identify_edge (a is increasing for j>=k)
         while(j<n && ar[edge]>=ar[j]) j++;
     }
     if(k<n && j<n){
@@ -40,12 +28,15 @@ unsigned int next_multiset_permutation(unsigned int *ar, size_t n, size_t k)
         }
 
         // find rightmost ascent to left of edge
-        i = edge -1;
-        while(i>=0 && ar[i]>=ar[i+1]) i--;
+        for (i = edge -1; ; i--) {
+            if (ar[i] < ar[i+1]) {
+                break;
+            } else if (i == 0) {
+                return 0;
+            }
+        }
 
-        if (i<0) return 0;
-
-        // find smallest j>=i+1 where a_j>a_i (a is decreasing for j>=i+1)
+        // find smallest j>=i+1 where identify_j>identify_i (a is decreasing for j>=i+1)
         j = n-1;
         while(j>i && ar[i] >= ar[j]) j--;
 
@@ -56,3 +47,6 @@ unsigned int next_multiset_permutation(unsigned int *ar, size_t n, size_t k)
 
     return 1;
 }
+
+
+#endif

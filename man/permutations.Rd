@@ -4,23 +4,33 @@
 \alias{permutations}
 \title{Permutations generator}
 \usage{
-permutations(n, k = n, x = NULL, freq = NULL, replace = FALSE,
-  type = "r")
+permutations(x = NULL, k = n, n = NULL, v = NULL, freq = NULL,
+  replace = FALSE, layout = "row", nitem = -1L, skip = NULL,
+  index = NULL, nsample = NULL)
 }
 \arguments{
-\item{n}{an integer. If \code{freq} is not NULL, \code{n} would be set as \code{sum(freq)},
-otherwise if \code{x} is not NULL, \code{n} would be set as \code{length(x)}.}
+\item{x}{an integer or a vector, will be treated as \code{n} if integer; otherwise, will be treated as \code{v}}
 
-\item{k}{an integer}
+\item{k}{an integer, the number of items drawn}
 
-\item{x}{an optional vector indicating item labels}
+\item{n}{an integer, the total number of items, its actual value may be determined by other variables}
+
+\item{v}{a vector to be drawn}
 
 \item{freq}{an integer vector of item repeat frequencies}
 
 \item{replace}{an logical to draw items with replacement}
 
-\item{type}{if "r", "c" or "l" is specified, the returned value would be a
+\item{layout}{if "row", "column" or "list" is specified, the returned value would be a
 "row-major" matrix, a "column-major" matrix or a list respectively}
+
+\item{nitem}{number of permutations required, usually used with \code{skip}}
+
+\item{skip}{the number of permutations skipped}
+
+\item{index}{a vector of indices of the desired permutations}
+
+\item{nsample}{sampling random permutations}
 }
 \description{
 This function generates all the permutations of selecting \code{k} items from \code{n} items.
@@ -28,25 +38,34 @@ The results are in lexicographical order.
 }
 \examples{
 permutations(3)
-permutations(x = LETTERS[1:3])
+permutations(LETTERS[1:3])
 
 # choose 2 from 4
 permutations(4, 2)
-permutations(x = LETTERS[1:3], k = 2)
+permutations(LETTERS[1:3], k = 2)
 
 # multiset with frequencies c(2, 3)
-permutations(freq = c(2, 3), k = 3)
+permutations(k = 3, freq = c(2, 3))
 
 # with replacement
 permutations(4, 2, replace = TRUE)
 
 # column major
-permutations(3, type = "c")
-permutations(4, 2, type = "c")
+permutations(3, layout = "column")
+permutations(4, 2, layout = "column")
 
 # list output
-permutations(3, type = "l")
-permutations(4, 2, type = "l")
+permutations(3, layout = "list")
+permutations(4, 2, layout = "list")
+
+# specifc range of permutations
+permutations(4, 2, nitem = 2, skip = 3)
+
+# specific permutations
+permutations(4, 2, index = c(3, 5))
+
+# random permutations
+permutations(4, 2, nsample = 3)
 
 # zero sized permutations
 dim(permutations(0))

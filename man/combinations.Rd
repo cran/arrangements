@@ -4,23 +4,33 @@
 \alias{combinations}
 \title{Combinations generator}
 \usage{
-combinations(n, k, x = NULL, freq = NULL, replace = FALSE,
-  type = "r")
+combinations(x = NULL, k = n, n = NULL, v = NULL, freq = NULL,
+  replace = FALSE, layout = "row", nitem = -1L, skip = NULL,
+  index = NULL, nsample = NULL)
 }
 \arguments{
-\item{n}{an integer. If \code{freq} is not NULL, \code{n} would be set as \code{sum(freq)},
-otherwise if \code{x} is not NULL, \code{n} would be set as \code{length(x)}.}
+\item{x}{an integer or a vector, will be treated as \code{n} if integer; otherwise, will be treated as \code{v}}
 
-\item{k}{an integer}
+\item{k}{an integer, the number of items drawn}
 
-\item{x}{an optional vector indicating item labels}
+\item{n}{an integer, the total number of items, its actual value may be determined by other variables}
+
+\item{v}{a vector to be drawn}
 
 \item{freq}{an integer vector of item repeat frequencies}
 
 \item{replace}{an logical to draw items with replacement}
 
-\item{type}{if "r", "c" or "l" is specified, the returned value would be a
+\item{layout}{if "row", "column" or "list" is specified, the returned value would be a
 "row-major" matrix, a "column-major" matrix or a list respectively}
+
+\item{nitem}{number of combinations required, usually used with \code{skip}}
+
+\item{skip}{the number of combinations skipped}
+
+\item{index}{a vector of indices of the desired combinations}
+
+\item{nsample}{sampling random combinations}
 }
 \description{
 This function generates all the combinations of selecting \code{k} items from \code{n} items.
@@ -29,19 +39,28 @@ The results are in lexicographical order.
 \examples{
 # choose 2 from 4
 combinations(4, 2)
-combinations(x = LETTERS[1:3], k = 2)
+combinations(LETTERS[1:3], k = 2)
 
 # multiset with frequencies c(2, 3)
-combinations(freq = c(2, 3), k = 3)
+combinations(k = 3, freq = c(2, 3))
 
 # with replacement
 combinations(4, 2, replace = TRUE)
 
 # column major
-combinations(4, 2, type = "c")
+combinations(4, 2, layout = "column")
 
 # list output
-combinations(4, 2, type = "l")
+combinations(4, 2, layout = "list")
+
+# specifc range of combinations
+combinations(4, 2, nitem = 2, skip = 3)
+
+# specific combinations
+combinations(4, 2, index = c(3, 5))
+
+# random combinations
+combinations(4, 2, nsample = 3)
 
 # zero sized combinations
 dim(combinations(5, 0))

@@ -1,7 +1,89 @@
+#' Number of combinations
+#' @template param_pc
+#' @param bigz an logical to indicate using [gmp::bigz]
+#' @seealso [combinations] for generating all combinations and [icombinations] for iterating combinations
+#' @examples
+#' ncombinations(5, 2)
+#' ncombinations(LETTERS, k = 5)
+#'
+#' # integer overflow
+#' \dontrun{ncombinations(40, 15)}
+#' ncombinations(40, 15, bigz = TRUE)
+#'
+#' # number of combinations of `c("a", "b", "b")`
+#' # they are `c("a", "b")` and `c("b", "b")`
+#' ncombinations(k = 2, freq = c(1, 2))
+#'
+#' # zero sized combinations
+#' ncombinations(5, 0)
+#' ncombinations(5, 6)
+#' ncombinations(0, 1)
+#' ncombinations(0, 0)
+#'
+#' @export
+ncombinations <- function(x = NULL, k = n, n = NULL, v = NULL, freq = NULL, replace = FALSE,
+                          bigz = FALSE) {
+    .Call("ncombinations", PACKAGE = "arrangements", x, k, n, v, freq, replace, bigz)
+}
+
+
+#' @title Combinations generator
+#'
+#' @description
+#' This function generates all the combinations of selecting `k` items from `n` items.
+#' The results are in lexicographical order.
+#'
+#' @template param_pc
+#' @template param_type
+#' @param nitem number of combinations required, usually used with \code{skip}
+#' @param skip the number of combinations skipped
+#' @param index a vector of indices of the desired combinations
+#' @param nsample sampling random combinations
+#' @seealso [icombinations] for iterating combinations and [ncombinations] to calculate number of combinations
+#' @examples
+#' # choose 2 from 4
+#' combinations(4, 2)
+#' combinations(LETTERS[1:3], k = 2)
+#'
+#' # multiset with frequencies c(2, 3)
+#' combinations(k = 3, freq = c(2, 3))
+#'
+#' # with replacement
+#' combinations(4, 2, replace = TRUE)
+#'
+#' # column major
+#' combinations(4, 2, layout = "column")
+#'
+#' # list output
+#' combinations(4, 2, layout = "list")
+#'
+#' # specifc range of combinations
+#' combinations(4, 2, nitem = 2, skip = 3)
+#'
+#' # specific combinations
+#' combinations(4, 2, index = c(3, 5))
+#'
+#' # random combinations
+#' combinations(4, 2, nsample = 3)
+#'
+#' # zero sized combinations
+#' dim(combinations(5, 0))
+#' dim(combinations(5, 6))
+#' dim(combinations(0, 0))
+#' dim(combinations(0, 1))
+#'
+#' @export
+combinations <- function(x = NULL, k = n, n = NULL, v = NULL, freq = NULL, replace = FALSE,
+                         layout = "row", nitem = -1L, skip = NULL, index = NULL, nsample = NULL) {
+    .Call("get_combinations", PACKAGE = "arrangements",
+          x, k, n, v, freq, replace, layout, nitem, index, nsample, NULL, skip, FALSE)
+}
+
+
 #' @details
 #' The `Combinations` class can be initialized by using the convenient wrapper `icombinations` or
 #' \preformatted{
-#' Combinations$new(n, k, x = NULL, freq = NULL, replace = FALSE)
+#' Combinations$new(n, k, v = NULL, freq = NULL, replace = FALSE)
 #' }
 #' @template iterator_methods
 #' @rdname icombinations
@@ -16,16 +98,14 @@ Combinations <- R6::R6Class(
     public = list(
         n = NULL,
         k = NULL,
-        x = NULL,
+        v = NULL,
         freq = NULL,
         replace = NULL,
-        initialize = function(n, k, x = NULL, freq = NULL, replace = FALSE) {
-            (n %% 1 == 0  && n >= 0) || stop("expect non-negative integer")
-            (k %% 1 == 0  && k >= 0) || stop("expect non-negative integer")
+        initialize = function(n, k, v = NULL, freq = NULL, replace = FALSE) {
             self$n <- as.integer(n)
             self$k <- as.integer(k)
-            self$x <- x
-            self$freq <- as_uint_array(freq)
+            self$v <- v
+            self$freq <- freq
             self$replace <- replace
             self$reset()
         },
@@ -33,19 +113,21 @@ Combinations <- R6::R6Class(
             private$state <- new.env()
             private$null_pending <- FALSE
         },
-        collect = function(type = "r") {
-            out <- self$getnext(-1L, type, drop = FALSE)
+        collect = function(layout = "row") {
+            out <- self$getnext(-1L, layout, drop = FALSE)
             self$reset()
             out
         },
-        getnext = function(d = 1L, type = NULL, drop = d == 1L && is.null(type)) {
+        getnext = function(d = 1L, layout = NULL, drop = d == 1L && is.null(layout)) {
             if (private$null_pending) {
                 out <- NULL
                 self$reset()
             } else {
-                out <- next_combinations(
-                    self$n, self$k, d, private$state, self$x, self$freq, self$replace, type)
-                if (type == "r" || is.null(type)){
+                out <- .Call("get_combinations", PACKAGE = "arrangements",
+                             NULL, self$k, self$n, self$v, self$freq, self$replace, layout,
+                             d, NULL, NULL, private$state, 0L, drop)
+
+                if (layout == "row" || is.null(layout)){
                     if (nrow(out) == 0) {
                         out <- NULL
                         self$reset()
@@ -55,7 +137,7 @@ Combinations <- R6::R6Class(
                     if (!is.null(out) && drop) {
                         dim(out) <- NULL
                     }
-                } else if (type == "c"){
+                } else if (layout == "column"){
                     if (ncol(out) == 0) {
                         out <- NULL
                         self$reset()
@@ -65,7 +147,7 @@ Combinations <- R6::R6Class(
                     if (!is.null(out) && drop) {
                         dim(out) <- NULL
                     }
-                } else if (type == "l"){
+                } else if (layout == "list"){
                     if (length(out) == 0) {
                         out <- NULL
                         self$reset()
@@ -86,128 +168,6 @@ Combinations <- R6::R6Class(
     )
 )
 
-next_combinations <- function(n, k, d, state, x, freq, replace, type) {
-    if (k == 0) {
-        if (type == "r" || is.null(type)) {
-            if (is.null(x)) {
-                out <- integer(0)
-            } else {
-                out <- new(typeof(x))
-            }
-            dim(out) <- c(1, 0)
-        } else if (type == "c") {
-            if (is.null(x)) {
-                out <- integer(0)
-            } else {
-                out <- new(typeof(x))
-            }
-            dim(out) <- c(0, 1)
-        } else {
-            if (n == 0) {
-                if (is.null(freq)) {
-                    out <- list(integer(0))
-                } else {
-                    out <- list(new(typeof(x)))
-                }
-            } else {
-                out <- list()
-            }
-        }
-    } else if (replace) {
-        out <- .Call(
-            "next_replace_combinations",
-            PACKAGE = "arrangements",
-            n,
-            k,
-            d,
-            state,
-            x,
-            type)
-    } else if (n < k) {
-        if (type == "r" || is.null(type)) {
-            if (is.null(x)) {
-                out <- integer(0)
-            } else {
-                out <- new(typeof(x))
-            }
-            dim(out) <- c(0, k)
-        } else if (type == "c") {
-            if (is.null(x)) {
-                out <- integer(0)
-            } else {
-                out <- new(typeof(x))
-            }
-            dim(out) <- c(k, 0)
-        } else {
-            out <- list()
-        }
-    } else if (!is.null(freq)) {
-        out <- .Call(
-            "next_multiset_combinations",
-            PACKAGE = "arrangements",
-            n,
-            k,
-            d,
-            state,
-            x,
-            as_uint_array(freq),
-            type)
-    } else {
-        out <- .Call(
-            "next_combinations",
-            PACKAGE = "arrangements",
-            n,
-            k,
-            d,
-            state,
-            x,
-            type)
-    }
-    out
-}
-
-#' @title Combinations generator
-#'
-#' @description
-#' This function generates all the combinations of selecting `k` items from `n` items.
-#' The results are in lexicographical order.
-#'
-#' @template param_pc
-#' @template param_type
-#' @seealso [icombinations] for iterating combinations and [ncombinations] to calculate number of combinations
-#' @examples
-#' # choose 2 from 4
-#' combinations(4, 2)
-#' combinations(x = LETTERS[1:3], k = 2)
-#'
-#' # multiset with frequencies c(2, 3)
-#' combinations(freq = c(2, 3), k = 3)
-#'
-#' # with replacement
-#' combinations(4, 2, replace = TRUE)
-#'
-#' # column major
-#' combinations(4, 2, type = "c")
-#'
-#' # list output
-#' combinations(4, 2, type = "l")
-#'
-#' # zero sized combinations
-#' dim(combinations(5, 0))
-#' dim(combinations(5, 6))
-#' dim(combinations(0, 0))
-#' dim(combinations(0, 1))
-#'
-#' @export
-combinations <- function(n, k, x = NULL, freq = NULL, replace = FALSE, type = "r") {
-    if (!replace && !is.null(freq)) {
-        n <- sum(freq)
-        is.null(x) || length(freq) == length(x) || stop("length of x and freq should be the same")
-    } else if (!is.null(x)) {
-        n <- length(x)
-    }
-    next_combinations(n, k, -1L, NULL, x, freq, replace, type)
-}
 
 #' @title Combinations iterator
 #' @description
@@ -220,7 +180,7 @@ combinations <- function(n, k, x = NULL, freq = NULL, replace = FALSE, type = "r
 #' icomb <- icombinations(5, 2)
 #' icomb$getnext()
 #' icomb$getnext(2)
-#' icomb$getnext(type = "c", drop = FALSE)
+#' icomb$getnext(layout = "column", drop = FALSE)
 #' # collect remaining combinations
 #' icomb$collect()
 #'
@@ -229,69 +189,18 @@ combinations <- function(n, k, x = NULL, freq = NULL, replace = FALSE, type = "r
 #'   sum(x)
 #' }
 #' @export
-icombinations <- function(n, k, x = NULL, freq = NULL, replace = FALSE) {
-    if (!replace && !is.null(freq)) {
-        n <- sum(freq)
-        is.null(x) || length(freq) == length(x) || stop("length of x and freq should be the same")
-    } else if (!is.null(x)) {
-        n <- length(x)
-    }
-    Combinations$new(n, k, x, freq, replace)
-}
-
-#' Number of combinations
-#' @template param_pc
-#' @param bigz an logical to indicate using [gmp::bigz]
-#' @seealso [combinations] for generating all combinations and [icombinations] for iterating combinations
-#' @examples
-#' ncombinations(5, 2)
-#' ncombinations(x = LETTERS, k = 5)
-#'
-#' # integer overflow
-#' \dontrun{ncombinations(40, 15)}
-#' ncombinations(40, 15, bigz = TRUE)
-#'
-#' # number of combinations of `c("a", "b", "b")`
-#' # they are `c("a", "b")` and `c("b", "b")`
-#' ncombinations(freq = c(1, 2), k = 2)
-#'
-#' # zero sized combinations
-#' ncombinations(5, 0)
-#' ncombinations(5, 6)
-#' ncombinations(0, 1)
-#' ncombinations(0, 0)
-#'
-#' @export
-ncombinations <- function(n, k, x = NULL, freq  =NULL, replace = FALSE, bigz = FALSE) {
-    if (!replace && !is.null(freq)) {
-        n <- sum(freq)
-        is.null(x) || length(freq) == length(x) || stop("length of x and freq should be the same")
-    } else if (!is.null(x)) {
-        n <- length(x)
-    }
-    (n %% 1 == 0  && n >= 0) || stop("expect non-negative integer")
-    (k %% 1 == 0  && k >= 0) || stop("expect non-negative integer")
-    if (bigz) {
-        if (replace) {
-            out <- gmp::chooseZ(n + k - 1, k)
-        } else if (n < k) {
-            out <- 0
-        } else if (is.null(freq)) {
-            out <- gmp::chooseZ(n, k)
-        } else {
-            out <- .Call("ncomb_f_bigz", PACKAGE = "arrangements", as_uint_array(freq), k)
-        }
-
+icombinations <- function(x, k = n, n = NULL, v = NULL, freq = NULL, replace = FALSE) {
+    if (missing(x)) {
+        n <- validate_n_value(n, v, freq, replace)
     } else {
-        if (replace) {
-            out <- choose(n + k - 1, k)
-        } else if (n < k) {
-            out <- 0
-        } else if (is.null(freq)) {
-            out <- choose(n, k)
+        if (length(x) == 1 && is.numeric(x)) {
+            n <- validate_n_value(x, v, freq)
         } else {
-            out <- .Call("ncomb_f", PACKAGE = "arrangements", as_uint_array(freq), k)
+            v <- x
+            n <- validate_n_value(n, v, freq, replace)
         }
     }
-    convertz(out, bigz)
+    (k %% 1 == 0 && k >= 0) || stop("expect integer")
+
+    Combinations$new(n, k, v, freq, replace)
 }
