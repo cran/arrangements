@@ -305,7 +305,6 @@ SEXP next_multiset_permutations(int* fp, size_t flen, int k, SEXP labels, char l
         result = PROTECT(resize_layout(result, j, layout));
         nprotect++;
     }
-    attach_factor_levels(result, labels);
     UNPROTECT(nprotect);
     return result;
 }
@@ -387,8 +386,8 @@ SEXP obtain_multiset_permutations(int* fp, size_t flen, int k, SEXP labels, char
         }
 
         mpz_clear(z);
+        mpz_clear(maxz);
         if (sampling){
-            mpz_clear(maxz);
             gmp_randclear(randstate);
             PutRNGstate();
         } else {
@@ -434,7 +433,6 @@ SEXP obtain_multiset_permutations(int* fp, size_t flen, int k, SEXP labels, char
         }
     }
 
-    attach_factor_levels(result, labels);
     UNPROTECT(nprotect);
     return result;
 }

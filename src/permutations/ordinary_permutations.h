@@ -187,7 +187,6 @@ SEXP next_ordinary_permutations(int n, int k, SEXP labels, SEXP freq, char layou
         result = PROTECT(resize_layout(result, j, layout));
         nprotect++;
     }
-    attach_factor_levels(result, labels);
     UNPROTECT(nprotect);
     return result;
 }
@@ -269,8 +268,8 @@ SEXP obtain_ordinary_permutations(int n, SEXP labels, char layout, SEXP _index, 
         }
 
         mpz_clear(z);
+        mpz_clear(maxz);
         if (sampling){
-            mpz_clear(maxz);
             gmp_randclear(randstate);
             PutRNGstate();
         } else {
@@ -316,7 +315,6 @@ SEXP obtain_ordinary_permutations(int n, SEXP labels, char layout, SEXP _index, 
         }
     }
 
-    attach_factor_levels(result, labels);
     UNPROTECT(nprotect);
     return result;
 }

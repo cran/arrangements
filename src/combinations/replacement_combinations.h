@@ -134,7 +134,6 @@ SEXP next_replacement_combinations(int n, int k, SEXP labels, char layout, int d
         result = PROTECT(resize_layout(result, j, layout));
         nprotect++;
     }
-    attach_factor_levels(result, labels);
     UNPROTECT(nprotect);
     return result;
 }
@@ -216,8 +215,8 @@ SEXP obtain_replacement_combinations(int n, int k, SEXP labels, char layout, SEX
         }
 
         mpz_clear(z);
+        mpz_clear(maxz);
         if (sampling){
-            mpz_clear(maxz);
             gmp_randclear(randstate);
             PutRNGstate();
         } else {
@@ -263,7 +262,6 @@ SEXP obtain_replacement_combinations(int n, int k, SEXP labels, char layout, SEX
         }
     }
 
-    attach_factor_levels(result, labels);
     UNPROTECT(nprotect);
     return result;
 }
