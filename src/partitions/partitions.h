@@ -73,14 +73,14 @@ SEXP next_asc_partitions(int n, char layout, int d, SEXP state) {
     d = verify_dimension(dd, n, layout);
 
     unsigned int* ap;
-    size_t* kp;
+    int* kp;
 
-    if (!variable_exist(state, "a", INTSXP, n, (void**) &ap)) {
+    if (!variable_exists(state, "a", INTSXP, n, (void**) &ap)) {
         for(i=0; i<n; i++) ap[i] = 1;
         status = 0;
     }
 
-    if (!variable_exist(state, "k", INTSXP, 1, (void**) &kp)) {
+    if (!variable_exists(state, "k", INTSXP, 1, (void**) &kp)) {
         kp[0] = n - 1;
         status = 0;
     }
@@ -116,21 +116,21 @@ SEXP next_desc_partitions(int n, char layout, int d, SEXP state) {
     d = verify_dimension(dd, n, layout);
 
     unsigned int* ap;
-    size_t* hp;
-    size_t* kp;
+    int* hp;
+    int* kp;
 
-    if (!variable_exist(state, "a", INTSXP, n, (void**) &ap)) {
+    if (!variable_exists(state, "a", INTSXP, n, (void**) &ap)) {
         ap[0] = n;
         for(i=1; i<n; i++) ap[i] = 1;
         status = 0;
     }
 
-    if (!variable_exist(state, "h", INTSXP, 1, (void**) &hp)) {
+    if (!variable_exists(state, "h", INTSXP, 1, (void**) &hp)) {
         hp[0] = 0;
         status = 0;
     }
 
-    if (!variable_exist(state, "k", INTSXP, 1, (void**) &kp)) {
+    if (!variable_exists(state, "k", INTSXP, 1, (void**) &kp)) {
         kp[0] = 1;
         status = 0;
     }
