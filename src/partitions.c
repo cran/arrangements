@@ -1,6 +1,6 @@
 #include <gmp.h>
 #include "gmp_utils.h"
-#include "partitions/partitions.h"
+#include "partitions/ordinary_partitions.h"
 #include "partitions/k_partitions.h"
 
 
@@ -48,54 +48,71 @@ SEXP get_partitions(SEXP _n, SEXP _k, SEXP _descending, SEXP _layout, SEXP _d,
     char layout = layout_flag(_layout);
     int d = Rf_asInteger(_d);
 
-    if (k == -1) {
-        if (n == 0) {
-            if (layout == 'r') {
-                ans = Rf_allocMatrix(INTSXP, 1, 0);
-            } else if (layout == 'c') {
-                ans = Rf_allocMatrix(INTSXP, 0, 1);
-            } else if (layout == 'l') {
-                ans = PROTECT(Rf_allocVector(VECSXP, 1));
-                SEXP ansi = PROTECT(Rf_allocVector(INTSXP, 0));
-                SET_VECTOR_ELT(ans, 0, ansi);
-                UNPROTECT(2);
+    if (Rf_isNull(_index) && Rf_isNull(_nsample)) {
+        if (k == -1) {
+            if (n == 0) {
+                if (layout == 'r') {
+                    ans = Rf_allocMatrix(INTSXP, 1, 0);
+                } else if (layout == 'c') {
+                    ans = Rf_allocMatrix(INTSXP, 0, 1);
+                } else if (layout == 'l') {
+                    ans = PROTECT(Rf_allocVector(VECSXP, 1));
+                    SEXP ansi = PROTECT(Rf_allocVector(INTSXP, 0));
+                    SET_VECTOR_ELT(ans, 0, ansi);
+                    UNPROTECT(2);
+                }
+            } else if (descending) {
+                ans = next_desc_partitions(n, layout, d, _skip, state);
+            } else {
+                ans = next_asc_partitions(n, layout, d, _skip, state);
             }
-        } else if (descending) {
-            ans = next_desc_partitions(n, layout, d, state);
         } else {
-            ans = next_asc_partitions(n, layout, d, state);
+            if (n == 0 && k == 0) {
+                if (layout == 'r') {
+                    ans = Rf_allocMatrix(INTSXP, 1, 0);
+                } else if (layout == 'c') {
+                    ans = Rf_allocMatrix(INTSXP, 0, 1);
+                } else if (layout == 'l') {
+                    ans = PROTECT(Rf_allocVector(VECSXP, 1));
+                    SEXP ansi = PROTECT(Rf_allocVector(INTSXP, 0));
+                    SET_VECTOR_ELT(ans, 0, ansi);
+                    UNPROTECT(2);
+                }
+            } else if (k > n || k == 0) {
+                if (layout == 'r') {
+                    ans = Rf_allocMatrix(INTSXP, 0, k);
+                } else if (layout == 'c') {
+                    ans = Rf_allocMatrix(INTSXP, k, 0);
+                } else if (layout == 'l') {
+                    ans = Rf_allocVector(VECSXP, 0);
+                }
+            } else if (descending) {
+                ans = next_desc_k_partitions(n, k, layout, d, _skip, state);
+            } else {
+                ans = next_asc_k_partitions(n, k, layout, d, _skip, state);
+            }
         }
     } else {
-        if (n == 0 && k == 0) {
-            if (layout == 'r') {
-                ans = Rf_allocMatrix(INTSXP, 1, 0);
-            } else if (layout == 'c') {
-                ans = Rf_allocMatrix(INTSXP, 0, 1);
-            } else if (layout == 'l') {
-                ans = PROTECT(Rf_allocVector(VECSXP, 1));
-                SEXP ansi = PROTECT(Rf_allocVector(INTSXP, 0));
-                SET_VECTOR_ELT(ans, 0, ansi);
-                UNPROTECT(2);
+        if (k == -1) {
+            if (descending) {
+                ans = obtain_desc_partitions(n, layout, _index, _nsample);
+            } else {
+                ans = obtain_asc_partitions(n, layout, _index, _nsample);
             }
-        } else if (k > n || k == 0) {
-            if (layout == 'r') {
-                ans = Rf_allocMatrix(INTSXP, 0, k);
-            } else if (layout == 'c') {
-                ans = Rf_allocMatrix(INTSXP, k, 0);
-            } else if (layout == 'l') {
-                ans = Rf_allocVector(VECSXP, 0);
-            }
-        } else if (descending) {
-            ans = next_desc_k_partitions(n, k, layout, d, state);
         } else {
-            ans = next_asc_k_partitions(n, k, layout, d, state);
+            if (descending) {
+                ans = obtain_desc_k_partitions(n, k, layout, _index, _nsample);
+            } else {
+                ans = obtain_asc_k_partitions(n, k, layout, _index, _nsample);
+            }
         }
     }
 
-    if ((!Rf_isNull(_drop) && Rf_asLogical(_drop)) ||
-                (d == 1 && Rf_isNull(_layout)) ||
-                (!Rf_isNull(_index) && index_length(_index) == 1 && Rf_isNull(_layout)) ||
-                (!Rf_isNull(_nsample) && as_uint(_nsample) == 1 && Rf_isNull(_layout))) {
+    if ((!Rf_isNull(_drop) && Rf_asLogical(_drop)) || ((Rf_isNull(_drop) || Rf_asLogical(_drop)) &&
+                ((d == 1 && Rf_isNull(_layout)) ||
+                    (!Rf_isNull(_index) && index_length(_index) == 1 && Rf_isNull(_layout)) ||
+                    (!Rf_isNull(_nsample) && as_uint(_nsample) == 1 && Rf_isNull(_layout)))
+                )) {
         if (layout == 'r' && Rf_nrows(ans) == 1) {
             Rf_setAttrib(ans, R_DimSymbol, R_NilValue);
         } else if (layout == 'c' && Rf_ncols(ans) == 1) {

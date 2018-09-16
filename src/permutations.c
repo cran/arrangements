@@ -145,18 +145,19 @@ SEXP get_permutations(SEXP _x, SEXP _k, SEXP _n, SEXP _v, SEXP _freq, SEXP _repl
             ans = obtain_replacement_permutations(n, k, _v, layout, _index, _nsample);
         } else if (multiset) {
             ans = obtain_multiset_permutations(fp, flen, k, _v, layout, _index, _nsample);
-        } else if (k < n) {
-            ans = obtain_k_permutations(n, k, _v, layout, _index, _nsample);
-        } else {
+        } else if (n == k) {
             ans = obtain_ordinary_permutations(n, _v, layout, _index, _nsample);
+        } else {
+            ans = obtain_k_permutations(n, k, _v, layout, _index, _nsample);
         }
     }
 
     attach_factor_levels(ans, _v);
-    if ((!Rf_isNull(_drop) && Rf_asLogical(_drop)) ||
-                (d == 1 && Rf_isNull(_layout)) ||
-                (!Rf_isNull(_index) && index_length(_index) == 1 && Rf_isNull(_layout)) ||
-                (!Rf_isNull(_nsample) && as_uint(_nsample) == 1 && Rf_isNull(_layout))) {
+    if ((!Rf_isNull(_drop) && Rf_asLogical(_drop)) || ((Rf_isNull(_drop) || Rf_asLogical(_drop)) &&
+                ((d == 1 && Rf_isNull(_layout)) ||
+                    (!Rf_isNull(_index) && index_length(_index) == 1 && Rf_isNull(_layout)) ||
+                    (!Rf_isNull(_nsample) && as_uint(_nsample) == 1 && Rf_isNull(_layout)))
+                )) {
         if (layout == 'r' && Rf_nrows(ans) == 1) {
             Rf_setAttrib(ans, R_DimSymbol, R_NilValue);
         } else if (layout == 'c' && Rf_ncols(ans) == 1) {

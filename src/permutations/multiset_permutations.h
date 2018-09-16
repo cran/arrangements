@@ -69,7 +69,7 @@ void n_multiset_permutations_bigz(mpz_t z, int* freq, size_t flen, size_t k) {
     int i, j, h;
     for (i=0; i<flen; i++) n += freq[i];
     if (k > n) {
-        mpz_set(z, 0);
+        mpz_set_ui(z, 0);
         return;
     }
 
@@ -223,33 +223,12 @@ SEXP next_multiset_permutations(int* fp, size_t flen, int k, SEXP labels, char l
     dd = d == -1 ? maxd : d;
     d = verify_dimension(dd, n, layout);
 
-    mpz_t maxz;
-    int skip;
-    mpz_t skipz;
-    if (!Rf_isNull(_skip)) {
-        if (bigz) {
-            mpz_init(maxz);
-            mpz_init(skipz);
-            n_multiset_permutations_bigz(maxz, fp, flen, k);
-            if (as_mpz_array(&skipz, 1, _skip) < 0 || mpz_sgn(skipz) < 0) {
-                mpz_clear(skipz);
-                mpz_clear(maxz);
-                Rf_error("expect integer");
-            } else if (mpz_cmp(skipz, maxz) >= 0) {
-                mpz_set(skipz, 0);
-            }
-            mpz_clear(maxz);
-        } else {
-            skip = as_uint(_skip);
-            if (skip >= (int) maxd) {
-                skip = 0;
-            }
-        }
-    }
-
     unsigned int* ap;
 
     if (!variable_exists(state, "a", INTSXP, n, (void**) &ap)) {
+        mpz_t maxz;
+        int skip;
+        mpz_t skipz;
         if (Rf_isNull(_skip)) {
             h = 0;
             for (i = 0; i< flen; i++) {
@@ -259,9 +238,24 @@ SEXP next_multiset_permutations(int* fp, size_t flen, int k, SEXP labels, char l
             }
         } else {
             if (bigz) {
+                mpz_init(maxz);
+                mpz_init(skipz);
+                n_multiset_permutations_bigz(maxz, fp, flen, k);
+                if (as_mpz_array(&skipz, 1, _skip) < 0 || mpz_sgn(skipz) < 0) {
+                    mpz_clear(skipz);
+                    mpz_clear(maxz);
+                    Rf_error("expect integer");
+                } else if (mpz_cmp(skipz, maxz) >= 0) {
+                    mpz_set(skipz, 0);
+                }
+                mpz_clear(maxz);
                 identify_multiset_permutation_bigz(ap, fp, flen, k, skipz);
                 mpz_clear(skipz);
             } else {
+                skip = as_uint(_skip);
+                if (skip >= (int) maxd) {
+                    skip = 0;
+                }
                 identify_multiset_permutation(ap, fp, flen, k, skip);
             }
 
@@ -354,13 +348,11 @@ SEXP obtain_multiset_permutations(int* fp, size_t flen, int k, SEXP labels, char
             for (i = 0; i < d; i++) mpz_init(index[i]);
             int status = as_mpz_array(index, d, _index);
             for(i = 0; i < d; i++) {
-                if (status < 0 || mpz_sgn(index[i]) <= 0) {
+                if (status < 0 || mpz_sgn(index[i]) <= 0 || mpz_cmp(index[i], maxz) > 0) {
                     for (i = 0; i < d; i++) mpz_clear(index[i]);
                     mpz_clear(maxz);
                     mpz_clear(z);
-                    Rf_error("expect integer");
-                } else if (mpz_cmp(index[i], maxz) > 0) {
-                    mpz_set(index[i], maxz);
+                    Rf_error("invalid index");
                 }
             }
         }
@@ -399,12 +391,10 @@ SEXP obtain_multiset_permutations(int* fp, size_t flen, int k, SEXP labels, char
         if (sampling) {
             GetRNGstate();
         } else {
-            index = as_uint_array(_index);
+            index = as_uint_index(_index);
             for (i = 0; i < d; i++) {
-                if (index[i] <= 0) {
-                    Rf_error("expect integer");
-                } else if (index[i] > maxd) {
-                    index[i] = maxd;
+                if (index[i] <= 0 || index[i] > maxd) {
+                    Rf_error("invalid index");
                 }
             }
         }
