@@ -1,7 +1,7 @@
 #' Number of partitions
 #' @param n an non-negative integer to be partitioned
 #' @param k number of parts
-#' @param bigz an logical to indicate using [gmp::bigz]
+#' @param bigz an logical to use [gmp::bigz]
 #' @seealso [partitions] for generating all partitions and [ipartitions] for iterating partitions
 #' @examples
 #' # number of partitions of 10
@@ -27,17 +27,17 @@ npartitions <- function(n, k = NULL, bigz = FALSE) {
 
 #' Partitions generator
 #'
-#' This function partitions an non-negative interger `n` into `k` parts or any part size.
+#' This function partitions an non-negative interger `n` into `k` parts or parts of any sizes.
 #' The results are in lexicographical or reversed lexicographical order.
 #'
 #' @param n an non-negative integer to be partitioned
 #' @param k number of parts
 #' @param descending logical to use reversed lexicographical order
 #' @template param_type
-#' @param nitem number of combinations required, usually used with \code{skip}
-#' @param skip the number of combinations skipped
-#' @param index a vector of indices of the desired combinations
-#' @param nsample sampling random combinations
+#' @param nitem number of partitions required, usually used with \code{skip}
+#' @param skip the number of partitions skipped
+#' @param index a vector of indices of the desired partitions
+#' @param nsample sampling random partitions
 #' @param drop vectorize a matrix or unlist a list
 #' @seealso [ipartitions] for iterating partitions and [npartitions] to calculate number of partitions
 #' @examples
@@ -139,13 +139,13 @@ Partitions <- R6::R6Class(
 #' @title Partitions iterator
 #' @description
 #' This function returns a [Partitions](Partitions-class.html) iterator for iterating
-#' partitions of an non-negative integer `n` into `k` parts or any part size.
+#' partitions of an non-negative integer `n` into `k` parts or parts of any sizes.
 #' The iterator allows users to fetch the next partition(s) via the `getnext()` method.
 #'
 #' @param n an non-negative integer to be partitioned
 #' @param k number of parts
 #' @param descending logical to use reversed lexicographical order
-#' @param skip the number of combinations skipped
+#' @param skip the number of partitions skipped
 #' @seealso [partitions] for generating all partitions and [npartitions] to calculate number of partitions
 #' @examples
 #' ipart <- ipartitions(10)
