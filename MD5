@@ -1,4 +1,4 @@
-dbcbad28eee71942d95412b5b0a93ea6 *DESCRIPTION
+41d3320ff5e25794def4d6d5d3e088b2 *DESCRIPTION
 1919192100d337fa419a9aa80c5652fe *LICENSE
 ba85b2f8e098c1cd04204719e56e4604 *NAMESPACE
 5f7b34a063d00721ccc3b33e23ac34e6 *R/arrangements.R
@@ -19,7 +19,7 @@ e2191e44cd19df92a3d989cc3adc97fc *man/partitions.Rd
 93d2d2b075a4d10ca56720b2ddd7be66 *man/permutations.Rd
 5e77b706370505ea7b1d2b3873996172 *src/Makevars
 30dd61bb4dcb0c2911e7c46d2655c976 *src/arrangements.c
-f177f44d116fd3f0220eedb3a19d3168 *src/combinations.c
+a838016c4998e7871e4fd84d02a62d11 *src/combinations.c
 407f35531accc5760384f83f6cbe367c *src/combinations.h
 f132ade9e4544db6240a4a55bff9f918 *src/combinations/multiset_combinations.h
 74eb87f2c05f2e2fa73f4ad97df23b4c *src/combinations/ordinary_combinations.h
@@ -39,18 +39,18 @@ d6c674d0dce1ee3c48a0b18201892741 *src/combinatorics/permutation.h
 074ea8e54b59b3616acef32e18de7a8e *src/gmp_utils.c
 cfa96f2b8bb0aa2be284f49d2cb3421f *src/gmp_utils.h
 82ddce5f271dfc17fe10b21a97826dee *src/macros.h
-6da505a9bf9d969cc7f68b08d676affc *src/partitions.c
+e9a7e5407c432a8f369d985f755c6e41 *src/partitions.c
 a6edcc502ed5601542698428838120a4 *src/partitions.h
 fe4d1e259fca38b7181d0e6875822d9e *src/partitions/k_partitions.h
 cc3fec027437ec7192b7f0cf03c11e78 *src/partitions/ordinary_partitions.h
 a3a6021fa84b8be83e3484d4239c4f35 *src/partitions/partitions_utils.h
-56d1b925a336768ed2c8dc5ac81ad9e8 *src/permutations.c
+03385eafb6d80189f71a09f8459db5cf *src/permutations.c
 096d1777856eb0d2f2c0932048ec91fe *src/permutations.h
 510f113823f32dc97250ff4234099bb5 *src/permutations/k_permutations.h
 474c6cd27710e33a42a66c6ad37b3cdd *src/permutations/multiset_permutations.h
 dd44289c7db9e934e53d2183f37b4cea *src/permutations/ordinary_permutations.h
 a54c064259759f638db41d9e4415dc4b *src/permutations/replacement_permutations.h
-a8d12aa05f144c4c1cd56779e82f8569 *src/utils.c
+87689448ca23fd4ae9cbc88d54a1e52a *src/utils.c
 b423c6925b44ca8140b22c3a0957e1bc *src/utils.h
 9b7f083569ea155ba9fa465e129d1918 *tests/testthat.R
 29dd9cce1224afeef153f8f8d6c8793d *tests/testthat/test_combinations.R
