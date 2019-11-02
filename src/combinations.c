@@ -1,10 +1,10 @@
 #include <gmp.h>
-#include "gmp_utils.h"
 #include "macros.h"
 #include "utils.h"
-#include "combinations/ordinary_combinations.h"
-#include "combinations/multiset_combinations.h"
-#include "combinations/replacement_combinations.h"
+#include "combinations.h"
+#include "combinations-ordinary.h"
+#include "combinations-multiset.h"
+#include "combinations-replacement.h"
 
 
 SEXP ncombinations(SEXP _x, SEXP _k, SEXP _n, SEXP _v, SEXP _freq, SEXP _replace, SEXP _bigz) {
@@ -57,7 +57,7 @@ SEXP ncombinations(SEXP _x, SEXP _k, SEXP _n, SEXP _v, SEXP _freq, SEXP _replace
 }
 
 
-SEXP get_combinations(SEXP _x, SEXP _k, SEXP _n, SEXP _v, SEXP _freq, SEXP _replace,
+SEXP collect_combinations(SEXP _x, SEXP _k, SEXP _n, SEXP _v, SEXP _freq, SEXP _replace,
                       SEXP _layout, SEXP _d, SEXP _index, SEXP _nsample, SEXP state, SEXP _skip, SEXP _drop) {
     int i;
     SEXP ans = R_NilValue;
@@ -124,11 +124,11 @@ SEXP get_combinations(SEXP _x, SEXP _k, SEXP _n, SEXP _v, SEXP _freq, SEXP _repl
         }
     } else {
         if (replace) {
-            ans = obtain_replacement_combinations(n, k, _v, layout, _index, _nsample);
+            ans = catch_replacement_combinations(n, k, _v, layout, _index, _nsample);
         } else if (multiset) {
-            ans = obtain_multiset_combinations(fp, flen, k, _v, layout, _index, _nsample);
+            ans = catch_multiset_combinations(fp, flen, k, _v, layout, _index, _nsample);
         } else {
-            ans = obtain_ordinary_combinations(n, k, _v, layout, _index, _nsample);
+            ans = catch_ordinary_combinations(n, k, _v, layout, _index, _nsample);
         }
     }
 

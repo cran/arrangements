@@ -1,11 +1,10 @@
 #include <gmp.h>
-#include "gmp_utils.h"
 #include "macros.h"
 #include "utils.h"
-#include "permutations/ordinary_permutations.h"
-#include "permutations/k_permutations.h"
-#include "permutations/multiset_permutations.h"
-#include "permutations/replacement_permutations.h"
+#include "permutations-ordinary.h"
+#include "permutations-k.h"
+#include "permutations-multiset.h"
+#include "permutations-replacement.h"
 
 
 SEXP npermutations(SEXP _x, SEXP _k, SEXP _n, SEXP _v, SEXP _freq, SEXP _replace, SEXP _bigz) {
@@ -73,7 +72,7 @@ SEXP npermutations(SEXP _x, SEXP _k, SEXP _n, SEXP _v, SEXP _freq, SEXP _replace
 }
 
 
-SEXP get_permutations(SEXP _x, SEXP _k, SEXP _n, SEXP _v, SEXP _freq, SEXP _replace,
+SEXP collect_permutations(SEXP _x, SEXP _k, SEXP _n, SEXP _v, SEXP _freq, SEXP _replace,
                       SEXP _layout, SEXP _d, SEXP _index, SEXP _nsample, SEXP state, SEXP _skip, SEXP _drop) {
     int i;
     SEXP ans = R_NilValue;
@@ -142,13 +141,13 @@ SEXP get_permutations(SEXP _x, SEXP _k, SEXP _n, SEXP _v, SEXP _freq, SEXP _repl
         }
     } else {
         if (replace) {
-            ans = obtain_replacement_permutations(n, k, _v, layout, _index, _nsample);
+            ans = catch_replacement_permutations(n, k, _v, layout, _index, _nsample);
         } else if (multiset) {
-            ans = obtain_multiset_permutations(fp, flen, k, _v, layout, _index, _nsample);
+            ans = catch_multiset_permutations(fp, flen, k, _v, layout, _index, _nsample);
         } else if (n == k) {
-            ans = obtain_ordinary_permutations(n, _v, layout, _index, _nsample);
+            ans = catch_ordinary_permutations(n, _v, layout, _index, _nsample);
         } else {
-            ans = obtain_k_permutations(n, k, _v, layout, _index, _nsample);
+            ans = catch_k_permutations(n, k, _v, layout, _index, _nsample);
         }
     }
 
