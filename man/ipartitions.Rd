@@ -5,18 +5,21 @@
 \alias{Partitions}
 \alias{ipartitions}
 \title{Partitions iterator}
-\format{An object of class \code{R6ClassGenerator} of length 24.}
+\format{An object of class \code{R6ClassGenerator} of length 25.}
 \usage{
 Partitions
 
-ipartitions(n, k = NULL, descending = FALSE, skip = NULL)
+ipartitions(n, k = NULL, distinct = FALSE, descending = FALSE,
+  skip = NULL)
 }
 \arguments{
 \item{n}{an non-negative integer to be partitioned}
 
 \item{k}{number of parts}
 
-\item{descending}{logical to use reversed lexicographical order}
+\item{distinct}{an logical to restrict distinct values}
+
+\item{descending}{an logical to use reversed lexicographical order}
 
 \item{skip}{the number of partitions skipped}
 }

@@ -1,21 +1,19 @@
 Type: Package
 Package: arrangements
-Title: Fast Generators and Iterators for Permutations, Combinations and
-        Partitions
-Version: 1.1.7
-Date: 2019-11-02
+Title: Fast Generators and Iterators for Permutations, Combinations,
+        Integer Partitions and Compositions
+Version: 1.1.8
+Date: 2020-01-06
 Authors@R: 
     person(given = "Randy",
            family = "Lai",
            role = c("aut", "cre"),
            email = "randy.cs.lai@gmail.com")
-Description: Fast generators and iterators for permutations, combinations
-    and partitions. The iterators allow users to generate arrangements in
-    a memory efficient manner and the generated arrangements are in
-    lexicographical (dictionary) order. Permutations and combinations can
-    be drawn with/without replacement and support multisets. It has been
-    demonstrated that 'arrangements' outperforms most of the existing
-    packages of similar kind. Some benchmarks could be found at
+Description: Fast generators and iterators for permutations, combinations,
+    integer partitions and compositions. The arrangements are in
+    lexicographical order and generated iteratively in a memory efficient manner. 
+    It has been demonstrated that 'arrangements' outperforms most existing
+    packages of similar kind. Benchmarks could be found at
     <https://randy3k.github.io/arrangements/articles/benchmark.html>.
 License: MIT + file LICENSE
 URL: https://randy3k.github.io/arrangements
@@ -27,8 +25,8 @@ Encoding: UTF-8
 NeedsCompilation: yes
 RoxygenNote: 6.1.1
 SystemRequirements: gmp (>= 4.2.3)
-Packaged: 2019-11-02 08:33:57 UTC; randy
+Packaged: 2020-01-07 19:58:48 UTC; randy
 Author: Randy Lai [aut, cre]
 Maintainer: Randy Lai <randy.cs.lai@gmail.com>
 Repository: CRAN
-Date/Publication: 2019-11-02 09:30:06 UTC
+Date/Publication: 2020-01-08 23:20:02 UTC

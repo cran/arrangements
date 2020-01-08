@@ -1,5 +1,19 @@
 #include "utils.h"
 
+void swap(unsigned int *ar, unsigned int first, unsigned int second) {
+    unsigned int temp = ar[first];
+    ar[first] = ar[second];
+    ar[second] = temp;
+}
+
+void reverse(unsigned int *ar, size_t len) {
+    unsigned int i, j;
+
+    for (i = 0, j = len - 1; i < j; i++, j--) {
+        swap(ar, i, j);
+    }
+}
+
 SEXP resize_row(SEXP x, size_t m, size_t n, size_t d) {
     if (TYPEOF(x) == INTSXP) {
         SEXP y = PROTECT(Rf_allocMatrix(INTSXP, d, n));
@@ -120,7 +134,7 @@ char layout_flag(SEXP _layout) {
 }
 
 int verify_dimension(double dd, int k, char layout) {
-    if (dd < 0) Rf_error("d should be positive");
+    if (dd <= 0) Rf_error("d should be positive");
     if (dd >= INT_MAX) Rf_error("too many results");
     if (layout != 'l') {
         if (dd * k >= R_XLEN_T_MAX) Rf_error("too many results");
@@ -259,61 +273,6 @@ int* as_uint_index(SEXP x) {
     return NULL;
 }
 
-double fact(int n) {
-    double out;
-    int i;
-    out = 1;
-    for(i=0; i<n; i++) {
-        out = out * (n - i);
-    }
-    return out;
-}
-
-double fallfact(int n, int k) {
-    double out;
-    int i;
-    if (n < k) {
-        return 0;
-    }
-    out = 1;
-    for(i=0; i<k; i++) {
-        out = out * (n - i);
-    }
-    return out;
-}
-
-
-double choose(int n, int k) {
-    double out = 1;
-    int i;
-    if (n >= 0 && n < k) {
-        return 0;
-    } else if (k == 0) {
-        return 1;
-    }
-
-    if (k > n / 2) k = n - k;
-
-    for (i = 1; i <= k; i++) {
-        out *= n - k + i;
-        out /= i;
-    }
-
-    return out;
-}
-
-double multichoose(int* freq, size_t flen) {
-    double out = 1;
-    size_t h, i, j;
-    h = 0;
-    for (i=0; i<flen; i++) {
-        for (j=1; j<=freq[i]; j++) {
-            h++;
-            out = out * h / j;
-        }
-    }
-    return out;
-}
 
 static int raw_size(mpz_t z) {
     int numb = 8 * sizeof(int);
@@ -323,7 +282,6 @@ static int raw_size(mpz_t z) {
 // from biginteger::as_raw
 // https://github.com/cran/gmp/blob/cb2935d6a7948e85e42b1402c6f5a3450547f0cf/src/biginteger.cc#L75
 SEXP mpz_to_bigz1(mpz_t z) {
-
     int size = raw_size(z);
     SEXP ans = PROTECT(Rf_allocVector(RAWSXP, size + sizeof(int)));
     unsigned char* raw = RAW(ans);
@@ -331,8 +289,12 @@ SEXP mpz_to_bigz1(mpz_t z) {
     r[0] = 1; // scalar RAWSXP
     r[1] = size / sizeof(int) - 2;
     r[2] = (int) mpz_sgn(z);
-    mpz_export(&r[3], 0, 1, sizeof(int), 0, 0, z);
-
+    if (mpz_sgn(z) == 0) {
+        // mpz_export writes nothing when z = 0
+        r[3] = 0;
+    } else {
+        mpz_export(&r[3], 0, 1, sizeof(int), 0, 0, z);
+    }
     Rf_setAttrib(ans, R_ClassSymbol, Rf_mkString("bigz"));
     UNPROTECT(1);
     return ans;
@@ -371,7 +333,8 @@ int as_mpz_array(mpz_t* a, size_t n, SEXP x) {
         int w;
         for (i = 0; i < n; i++) {
             w = (int) fabs(xp[i]);
-            mpz_set_ui(a[i], w == xp[i] ? w : 0);
+            if (w != xp[i]) return -1;
+            mpz_set_ui(a[i], w);
             if (xp[i] < 0) {
                 mpz_neg(a[i], a[i]);
             }

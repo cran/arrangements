@@ -21,7 +21,7 @@
 #' ncombinations(0, 0)
 #'
 #' @export
-ncombinations <- function(x = NULL, k = n, n = NULL, v = NULL, freq = NULL, replace = FALSE,
+ncombinations <- function(x = NULL, k = NULL, n = NULL, v = NULL, freq = NULL, replace = FALSE,
                           bigz = FALSE) {
     .Call(C_ncombinations, x, k, n, v, freq, replace, bigz)
 }
@@ -74,9 +74,9 @@ ncombinations <- function(x = NULL, k = n, n = NULL, v = NULL, freq = NULL, repl
 #' dim(combinations(0, 1))
 #'
 #' @export
-combinations <- function(x = NULL, k = n, n = NULL, v = NULL, freq = NULL, replace = FALSE,
+combinations <- function(x = NULL, k = NULL, n = NULL, v = NULL, freq = NULL, replace = FALSE,
                          layout = NULL, nitem = -1L, skip = NULL, index = NULL, nsample = NULL, drop = NULL) {
-    .Call(C_collect_combinations,
+    .Call(C_get_combinations,
           x, k, n, v, freq, replace, layout, nitem, index, nsample, NULL, skip, drop)
 }
 
@@ -105,6 +105,9 @@ Combinations <- R6::R6Class(
         skip = NULL,
         initialize = function(n, k, v = NULL, freq = NULL, replace = FALSE, skip = NULL) {
             self$n <- as.integer(n)
+            if (is.null(k)) {
+                k <- if (is.null(freq)) n else sum(freq)
+            }
             self$k <- as.integer(k)
             self$v <- v
             self$freq <- freq
@@ -122,11 +125,11 @@ Combinations <- R6::R6Class(
             out
         },
         getnext = function(d = 1L, layout = NULL, drop = NULL) {
-            if (private$state$null_pending) {
+            if (d > 0 && private$state$null_pending) {
                 out <- NULL
                 self$reset()
             } else {
-                out <- .Call(C_collect_combinations,
+                out <- .Call(C_get_combinations,
                              NULL, self$k, self$n, self$v, self$freq, self$replace, layout,
                              d, NULL, NULL, private$state, self$skip, drop)
                 is.null(out) && self$reset()
@@ -162,18 +165,7 @@ Combinations <- R6::R6Class(
 #'   sum(x)
 #' }
 #' @export
-icombinations <- function(x, k = n, n = NULL, v = NULL, freq = NULL, replace = FALSE, skip = NULL) {
-    if (missing(x)) {
-        n <- validate_n_value(n, v, freq, replace)
-    } else {
-        if (length(x) == 1 && is.numeric(x)) {
-            n <- validate_n_value(x, v, freq, replace)
-        } else {
-            v <- x
-            n <- validate_n_value(n, v, freq, replace)
-        }
-    }
-    (k %% 1 == 0 && k >= 0) || stop("expect integer")
-
+icombinations <- function(x = NULL, k = NULL, n = NULL, v = NULL, freq = NULL, replace = FALSE, skip = NULL) {
+    n <- validate_n_value(x, k, n, v, freq, replace)
     Combinations$new(n, k, v, freq, replace, skip)
 }

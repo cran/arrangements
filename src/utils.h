@@ -7,6 +7,10 @@
 #include <gmp.h>
 
 
+void swap(unsigned int *ar, unsigned int first, unsigned int second);
+
+void reverse(unsigned int *ar, size_t len);
+
 SEXP resize_row(SEXP x, size_t n, size_t k, size_t d);
 
 SEXP resize_col(SEXP x, size_t n, size_t k, size_t d);
@@ -28,14 +32,6 @@ int as_uint(SEXP x);
 int* as_uint_array(SEXP x);
 
 int* as_uint_index(SEXP x);
-
-double fact(int n);
-
-double fallfact(int n, int k);
-
-double choose(int n, int k);
-
-double multichoose(int* f, size_t flen);
 
 SEXP mpz_to_bigz1(mpz_t z);
 
