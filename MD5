@@ -1,4 +1,4 @@
-5fee531effe509614bfe8df71eedbdd9 *DESCRIPTION
+fca51155de1f02aaaa83a48a1a77d09c *DESCRIPTION
 1919192100d337fa419a9aa80c5652fe *LICENSE
 0d5f1a9084a0fcfdf132c5dbb5f122e8 *NAMESPACE
 d23bcb0fa6f58b4eaa955116d39130a3 *R/arrangements.R
@@ -6,7 +6,7 @@ ee4708ade90db786e196d8a327337210 *R/combinations.R
 c97cb909bcd65e85578e437d42b01bc4 *R/compositions.R
 858cfbe065f639f38e6310831c0a1c61 *R/partitions.R
 bade81367debae52a738e8d9506badb4 *R/permutations.R
-6d47e5cc381d7af9b80427468c6f1129 *README.md
+47fd092676a6050e71fafbef8bdfc686 *README.md
 c34a5bd4b917f928b80060b2ad481766 *man/arrangements-package.Rd
 ac57c0cdf904fb7be7ebdbe32652e68d *man/combinations.Rd
 b55e65037d4ae8dab06381fb48d67134 *man/compositions.Rd
@@ -24,9 +24,9 @@ efac29f25f74ba9ca4c0b2c34aaea948 *man/npermutations.Rd
 be3ca450ba826d2e4d06071ae6bb9141 *src/arrangements.c
 48fcf194e3478718a58b8fea8e96b594 *src/combinations.c
 26448d8283f6d77aee7a05a80ee313fe *src/combinations.h
-31fb1e12023f5383ea8de7e9026bfd13 *src/combinations/combinations-multiset.c
-0420eb3b5dafa952ea13e2f8761d3795 *src/combinations/combinations-ordinary.c
-34f71d460c93b0c8ff12cc8a40b3e3a3 *src/combinations/combinations-replacement.c
+1afaf964b5be759f685a5fe1bfc02ba0 *src/combinations/combinations-multiset.c
+3a0b52433bcd559fd0c9d4c3fc8040bf *src/combinations/combinations-ordinary.c
+c98440afe5a00c1bf083d86a0ab01e71 *src/combinations/combinations-replacement.c
 fc403d2ed18f324a56bba8daaa8d86b5 *src/compositions.c
 fa8b0aa6b00af408988d932f3ad60480 *src/compositions.h
 3c057bee8c89196bf14bd4652166f338 *src/compositions/compositions-asc-k.c
@@ -35,7 +35,7 @@ f0a5156043fcaad987c81cb16b45ab79 *src/compositions/compositions-desc-k.c
 0438e6ab18fce9e8c2cfe259632fade9 *src/compositions/compositions-desc.c
 d8985c30c5abc469cd686cf1b7b1c354 *src/compositions/compositions-utils.c
 440590c837b4b0b8d91609ff6e2fffd4 *src/compositions/compositions-utils.h
-5d39c0a95c58a0475d5832574af26d63 *src/macros.h
+82953ec4151d5d8c7b2a0f156a68ac0f *src/macros.h
 4fc46476ff954c160f0d8c06a9283e52 *src/math.c
 cd1f6d4fb2d4afbc3c4888df718396af *src/math.h
 73bcfd6896a99f157d8a44a11646ab63 *src/partitions.c
@@ -52,10 +52,10 @@ c6d3f9d68164e434f189a8d3edbdb65d *src/partitions/partitions-desc-k.c
 b05e49aa951e8d919a093dfa3a92cb42 *src/partitions/partitions-utils.h
 37fc2bfc2f6b8943c5a9c10de158d321 *src/permutations.c
 5ff3f35ece0916200cc5a8833866a33c *src/permutations.h
-1f95ff0175cdc177cb2bda74a8a635b1 *src/permutations/permutations-k.c
-0b8646b23d67e2f0f5964dc86f965aae *src/permutations/permutations-multiset.c
-a3f393c4020207a41b93de50516370a0 *src/permutations/permutations-ordinary.c
-7565e534ed0f3435c777c1d2438fc7a5 *src/permutations/permutations-replacement.c
+577eda88321d111fa8d0f130b82ce94e *src/permutations/permutations-k.c
+de6989ffd9896e7afee58ae20a2d62b4 *src/permutations/permutations-multiset.c
+1b541b0920fec8b44ffe505d496a2880 *src/permutations/permutations-ordinary.c
+e03a5eb496eb1479e1dc6dc6b4456797 *src/permutations/permutations-replacement.c
 9f1426b16f8c2c9ddf0d2e0a7359ab91 *src/utils.c
 97f39fa66c1b93ad2ac73bc9c988814d *src/utils.h
 9b7f083569ea155ba9fa465e129d1918 *tests/testthat.R
